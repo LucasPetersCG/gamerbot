@@ -3,7 +3,7 @@
 An efficient, asynchronous Discord Bot designed to fetch and deliver the latest news about **RPG** and **MMORPG** games directly from the Steam API.
 
 > **Project Status:** 🚀 **Active Development**
-
+>
 > *Origin Story:* This project started as a technical proficiency test for the **Kodland Python Pro** course. However, seeing its potential, I decided to maintain and expand it into a fully-featured product with AI capabilities.
 
 ## ✨ Key Features
@@ -28,32 +28,46 @@ An efficient, asynchronous Discord Bot designed to fetch and deliver the latest 
 
 ### Installation Guide
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/LucasPetersCG/gamerbot.git
-   cd gamerbot
 
-Environment Setup:
-Create a .env file in the root directory:
-code
-Ini
+1. **Clone the repository:**
+```bash
+git clone https://github.com/LucasPetersCG/gamerbot.git
+cd gamerbot
+```
+2. **Environment Setup:**
+Create a .env file in the root directory (you can copy .env.example) and add your credentials:
+```bash
+
 DISCORD_TOKEN=your_token_here
 NEWS_CHANNEL_ID=your_channel_id_here
-Launch with Docker:
-code
-Bash
+
+```
+3. **Launch with Docker:**
+```bash
+
 docker-compose up -d --build
-Monitor Logs:
-code
-Bash
+
+```
+4. **Initialize the Bot:**
+```bash
+
+docker-compose exec bot bash
+
+python main.py
+
+```
+5. **Check Logs:**
+```bash
+
 docker-compose logs -f
 
-🔮 Future Roadmap
+```
+**🔮 Future Roadmap**
 
-AI Integration: Translate news summaries to Portuguese (PT-BR) using LLMs (Groq API).
+- [] AI Integration: Translate news summaries to Portuguese (PT-BR) using LLMs (Groq API).
 
-RSS Feeds: Support for external news sources (IGN, Kotaku, Unity Blog).
+- [] RSS Feeds: Support for external news sources (IGN, Kotaku, Unity Blog).
 
-User Commands: Allow users to subscribe/unsubscribe from specific genres via commands.
+- [] User Commands: Allow users to subscribe/unsubscribe from specific genres via commands.
 
-Disclaimer: This is an educational project currently under expansion.
+- [] Disclaimer: This is an educational project currently under expansion.
