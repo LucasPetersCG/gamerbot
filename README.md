@@ -3,7 +3,7 @@
 An efficient, asynchronous Discord Bot designed to fetch and deliver the latest news about **RPG** and **MMORPG** games directly from the Steam API.
 
 > **Project Status:** 🚀 **Active Development**
->
+
 > *Origin Story:* This project started as a technical proficiency test for the **Kodland Python Pro** course. However, seeing its potential, I decided to maintain and expand it into a fully-featured product with AI capabilities.
 
 ## ✨ Key Features
@@ -30,8 +30,8 @@ An efficient, asynchronous Discord Bot designed to fetch and deliver the latest 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR-USERNAME/kodland-bot.git
-   cd kodland-bot
+   git clone https://github.com/LucasPetersCG/gamerbot.git
+   cd gamerbot
 
 Environment Setup:
 Create a .env file in the root directory:
@@ -47,6 +47,7 @@ Monitor Logs:
 code
 Bash
 docker-compose logs -f
+
 🔮 Future Roadmap
 
 AI Integration: Translate news summaries to Portuguese (PT-BR) using LLMs (Groq API).
