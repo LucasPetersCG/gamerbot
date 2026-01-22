@@ -62,12 +62,13 @@ python main.py
 docker-compose logs -f
 
 ```
-**🔮 Future Roadmap**
 
-- [] AI Integration: Translate news summaries to Portuguese (PT-BR) using LLMs (Groq API).
+## 🔮 Future Roadmap
 
-- [] RSS Feeds: Support for external news sources (IGN, Kotaku, Unity Blog).
+- [ ] **AI Integration:** Translate news summaries to Portuguese (PT-BR) using LLMs (Groq API).
 
-- [] User Commands: Allow users to subscribe/unsubscribe from specific genres via commands.
+- [ ] **RSS Feeds:** Support for external news sources (IGN, Kotaku, Unity Blog).
 
-- [] Disclaimer: This is an educational project currently under expansion.
+- [ ] **User Commands:** Allow users to subscribe/unsubscribe from specific genres via commands.
+
+- [ ] **Disclaimer:** This is an educational project currently under expansion.
