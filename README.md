@@ -71,4 +71,5 @@ docker-compose logs -f
 
 - [ ] **User Commands:** Allow users to subscribe/unsubscribe from specific genres via commands.
 
-- [ ] **Disclaimer:** This is an educational project currently under expansion.
+
+Disclaimer: This is an educational project currently under expansion.
