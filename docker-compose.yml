@@ -1,0 +1,10 @@
+services:
+  bot:
+    # Constrói a imagem a partir do diretório atual
+    build: . 
+    container_name: kodland_bot_dev
+    # Mapeia sua pasta local para dentro do container
+    volumes:
+      - .:/app
+    # Reinicia o container se ele falhar (bom para estabilidade)
+    restart: always
