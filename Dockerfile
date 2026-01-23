@@ -1,15 +1,21 @@
-# Usamos uma imagem "slim" para economizar espaço e memória
 FROM python:3.10-slim
 
-# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Variáveis de ambiente para evitar arquivos .pyc e logs presos no buffer
+# Variáveis de ambiente
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Instalamos o git (necessário para algumas dependências ou operações futuras)
+# Instala dependências do sistema (git é útil)
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Comando padrão que mantém o container rodando para podermos desenvolver
-CMD ["tail", "-f", "/dev/null"]
+# 1. Copia APENAS o requirements primeiro (para aproveitar o cache do Docker)
+COPY requirements.txt .
+
+# 2. Instala as bibliotecas
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 3. Só depois copia o código
+COPY . .
+
+CMD ["python", "main.py"]
