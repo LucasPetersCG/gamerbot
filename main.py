@@ -25,6 +25,9 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# Remover o comando help padrão para usar o nosso personalizado
+bot.remove_command('help')
+
 # --- GERENCIAMENTO DE DADOS ---
 def load_json(filepath):
     if os.path.exists(filepath):
@@ -61,17 +64,13 @@ def add_subscription(channel_id, service_tag):
 def remove_subscription(channel_id, service_tag):
     str_id = str(channel_id)
     
-    # Se o canal não tem nada configurado, não faz nada
     if str_id not in subscriptions:
         return False
 
     if service_tag == "all":
-        # Remove a chave inteira do dicionário (limpa tudo)
         del subscriptions[str_id]
     elif service_tag in subscriptions[str_id]:
-        # Remove apenas o serviço específico da lista
         subscriptions[str_id].remove(service_tag)
-        # Se a lista ficar vazia, removemos a chave para limpar o JSON
         if not subscriptions[str_id]:
             del subscriptions[str_id]
             
@@ -118,7 +117,6 @@ async def process_and_broadcast(news_items, force_target_channel=None, ignore_hi
             except Exception as e:
                 print(f"Erro no envio manual: {e}")
         else:
-            # Broadcast seguro usando cópia da lista
             for channel_id, subs in list(subscriptions.items()):
                 if source in subs: 
                     channel = bot.get_channel(int(channel_id))
@@ -142,7 +140,6 @@ async def fetch_news_cycle():
     await bot.wait_until_ready()
     print("🔄 [AUTO] Iniciando ciclo de busca...")
 
-    # 1. STEAM
     try:
         steam_news = await get_steam_news()
         await process_and_broadcast(steam_news)
@@ -151,7 +148,6 @@ async def fetch_news_cycle():
     
     await asyncio.sleep(5) 
     
-    # 2. TIBIA
     try:
         tibia_news = await get_tibia_news(days=1)
         await process_and_broadcast(tibia_news)
@@ -160,7 +156,6 @@ async def fetch_news_cycle():
 
     await asyncio.sleep(5)
 
-    # 3. RPG
     try:
         rpg_news = await asyncio.to_thread(get_rpg_news)
         await process_and_broadcast(rpg_news)
@@ -168,6 +163,78 @@ async def fetch_news_cycle():
         print(f"Erro crítico no ciclo RPG: {e}")
 
     print("✅ [AUTO] Ciclo finalizado.")
+
+# --- COMANDOS DE UX (AJUDA E BOAS VINDAS) ---
+
+@bot.command(name="help")
+async def help_command(ctx):
+    """Exibe o menu de ajuda personalizado."""
+    embed = discord.Embed(
+        title="🤖 GamerBot - Central de Ajuda",
+        description="Receba notícias traduzidas de Tibia, Steam e RPGs em geral!",
+        color=discord.Color.blue()
+    )
+
+    embed.add_field(
+        name="⚙️ Configuração (Admins)",
+        value=(
+            "`!setup_all_news` - Recebe TODAS as notícias neste canal.\n"
+            "`!setup_tibia_news` - Apenas notícias de Tibia.\n"
+            "`!setup_steam_news` - Apenas notícias da Steam.\n"
+            "`!setup_rpg_news` - Apenas notícias de RPGs de Mesa/Indie."
+        ),
+        inline=False
+    )
+
+    embed.add_field(
+        name="🗑️ Remover Assinaturas",
+        value=(
+            "`!remove_all` - Para de receber tudo neste canal.\n"
+            "`!remove_tibia`, `!remove_steam`, `!remove_rpg` - Remove específico."
+        ),
+        inline=False
+    )
+
+    embed.add_field(
+        name="🔍 Comandos Manuais (Teste)",
+        value=(
+            "`!last_tibia [dias]` - Busca notícias recentes de Tibia.\n"
+            "`!last_steam` - Busca última notícia da Steam.\n"
+            "`!last_rpg` - Busca últimas do feed RPG.\n"
+            "`!force_check` (Admin) - Força ciclo completo de atualização."
+        ),
+        inline=False
+    )
+    
+    embed.set_footer(text="Desenvolvido por LucasPetersCG")
+    await ctx.send(embed=embed)
+
+@bot.event
+async def on_guild_join(guild):
+    """Executado quando o bot entra em um novo servidor."""
+    print(f"Entrei no servidor: {guild.name}")
+    
+    # Tenta achar o canal de sistema ou o primeiro canal de texto disponível
+    channel = guild.system_channel
+    if channel is None:
+        for c in guild.text_channels:
+            if c.permissions_for(guild.me).send_messages:
+                channel = c
+                break
+    
+    if channel:
+        embed = discord.Embed(
+            title="👋 Olá! Eu sou o GamerBot!",
+            description=(
+                "Obrigado por me adicionar! Eu trago notícias de Games traduzidas com IA.\n\n"
+                "**Para começar:**\n"
+                "1. Vá até o canal de notícias.\n"
+                "2. Digite `!setup_all_news` (ou escolha uma categoria específica).\n\n"
+                "Para ver todos os comandos, digite `!help`."
+            ),
+            color=discord.Color.purple()
+        )
+        await channel.send(embed=embed)
 
 # --- COMANDOS DE CONFIGURAÇÃO (SETUP) ---
 @bot.command(name="setup_all_news")
@@ -198,7 +265,6 @@ async def setup_rpg(ctx):
 @bot.command(name="remove_all")
 @commands.has_permissions(administrator=True)
 async def remove_all(ctx):
-    """Remove TODAS as assinaturas deste canal."""
     if remove_subscription(ctx.channel.id, "all"):
         await ctx.send(f"🗑️ {ctx.channel.mention} removido de **TODAS** as listas de notícias.")
     else:
@@ -207,7 +273,6 @@ async def remove_all(ctx):
 @bot.command(name="remove_steam")
 @commands.has_permissions(administrator=True)
 async def remove_steam(ctx):
-    """Para de receber notícias da Steam neste canal."""
     if remove_subscription(ctx.channel.id, "Steam"):
         await ctx.send(f"🗑️ Notícias da **Steam** removidas deste canal.")
     else:
@@ -216,7 +281,6 @@ async def remove_steam(ctx):
 @bot.command(name="remove_tibia")
 @commands.has_permissions(administrator=True)
 async def remove_tibia(ctx):
-    """Para de receber notícias de Tibia neste canal."""
     if remove_subscription(ctx.channel.id, "Tibia"):
         await ctx.send(f"🗑️ Notícias de **Tibia** removidas deste canal.")
     else:
@@ -225,7 +289,6 @@ async def remove_tibia(ctx):
 @bot.command(name="remove_rpg")
 @commands.has_permissions(administrator=True)
 async def remove_rpg(ctx):
-    """Para de receber notícias de RPG neste canal."""
     if remove_subscription(ctx.channel.id, "RPG"):
         await ctx.send(f"🗑️ Notícias de **RPG** removidas deste canal.")
     else:
