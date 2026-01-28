@@ -1,9 +1,12 @@
 services:
   bot:
     build: .
-    container_name: kodland_bot_dev
+    container_name: gamer_bot
+    restart: always
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
+    # Mapeie apenas a pasta de dados se o bot salvar algo permanente
     volumes:
-      - .:/app
-    restart: always
+      - ./data:/app/data

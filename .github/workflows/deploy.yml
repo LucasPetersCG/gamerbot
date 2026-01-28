@@ -1,0 +1,40 @@
+name: Deploy Discord Bot
+on:
+  push:
+    branches: [ main ] # Ajuste se sua branch principal tiver outro nome
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Cria a pasta do projeto se não existir
+            mkdir -p ~/kodland-bot
+            cd ~/kodland-bot
+
+            # Sincroniza o código (Git clone ou Pull)
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/${{ github.repository }}.git .
+            else
+              git fetch --all
+              git reset --hard origin/main
+            fi
+
+            # Recria o arquivo .env a partir do Secret do GitHub
+            echo "${{ secrets.ENV_FILE }}" > .env
+
+            # Sobe os containers usando o docker-compose que já existe no seu projeto
+            # O --build garante que ele atualize a imagem com o código novo
+            docker compose up -d --build
+
+            # Limpa imagens antigas para não lotar o 1GB de disco da máquina
+            docker image prune -f
