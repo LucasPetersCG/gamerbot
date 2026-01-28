@@ -3,9 +3,9 @@ import os
 
 # Definição das "Personas" da IA baseadas na fonte
 PROMPTS = {
-    "Steam": "Atue como um jornalista de games tech e hype. Use gírias moderadas (update, nerf, buff).",
-    "Tibia": "Atue como um jogador veterano de Tibia (Old School). Use termos como 'Hunt', 'Update', 'CIP'.",
-    "RPG": "Atue como um Mestre de D&D (Dungeon Master) sábio e empolgado. Use termos de RPG de mesa."
+    "Steam": "Atue como um jornalista de games. Entenda o contexto de notícias de jogos de videogame e os principais jargões e tipos de palavras que se usa no contexto daquele jogo e a melhor forma de traduzí-las para o português sem perder o contexto.",
+    "Tibia": "Atue como um jornalista de game focado em Tibia. Entenda o contexto de notícias de jogos de videogame e os principais jargões e tipos de palavras que se usa no contexto daquele jogo e a melhor forma de traduzí-las para o português sem perder o contexto",
+    "RPG": "Atue como um jornalista de games focado em jogos de RPG de mesa. Entenda o contexto de notícias de jogos de videogame e os principais jargões e tipos de palavras que se usa no contexto daquele jogo e a melhor forma de traduzí-las para o português sem perder o contexto"
 }
 
 class AIService:
@@ -23,14 +23,14 @@ class AIService:
             short_content = content[:2500]
             
             # Seleciona o prompt base, ou usa um genérico se não encontrar
-            system_persona = PROMPTS.get(source_type, "Atue como um assistente gamer.")
+            system_persona = PROMPTS.get(source_type, "Atue como um jornalista de jogos.")
 
             prompt = (
                 f"{system_persona} "
-                f"Traduza e resuma a seguinte notícia para PT-BR. "
+                f"Traduza e resuma a seguinte notícia para PT-BR, incluindo o nome do jogo destacado antes do resumo. "
                 f"Seja direto, evite introduções longas como 'Aqui está o resumo'. "
                 f"Use formatação Markdown (negrito) para destacar pontos chave.\n\n"
-                f"TÍTULO ORIGINAL: {title}\n"
+                f"NOME DO JOGO - TÍTULO Traduzido: {title}\n"
                 f"CONTEÚDO: {short_content}"
             )
 
