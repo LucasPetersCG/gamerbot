@@ -54,7 +54,18 @@ Commands are restricted to **Administrators** to prevent configuration spam.
 | `!last_steam` | Fetches and posts the latest news for configured Steam games (ignoring history). |
 | `!last_rpg` | Fetches and posts the latest RSS entry from the RPG feed (ignoring history). |
 
-## 🚀 Getting Started
+## ☁️ Deployment & DevOps
+
+The project runs 24/7 in a production environment with an automated pipeline.
+
+- **Infrastructure:** Hosted on **Oracle Cloud Infrastructure (OCI)** using an Ampere (ARM) instance.
+- **Containerization:** The application runs inside a Docker container managed by `docker-compose`, ensuring isolation and easy restart policies (`restart: always`).
+- **CI/CD Pipeline:** Integrated with **GitHub Actions**.
+  1.  Developer pushes code to `main` branch.
+  2.  GitHub Action triggers an SSH connection to the Oracle Cloud instance.
+  3.  The pipeline executes `git pull`, rebuilds the Docker image, and restarts the service automatically.
+
+## 🚀 Getting Started (Local Development)
 
 ### Prerequisites
 - Docker & Docker Compose installed.
@@ -64,29 +75,23 @@ Commands are restricted to **Administrators** to prevent configuration spam.
 ### Installation Guide
 
 1. **Clone the repository:**
-```bash
-   git clone [https://github.com/LucasPetersCG/gamerbot.git](https://github.com/LucasPetersCG/gamerbot.git)
+   ```bash
+   git clone https://github.com/LucasPetersCG/gamerbot.git
    cd gamerbot
-```
+  ```
 2. **Environment Setup:** Create a .env file in the root directory and add your credentials:
-```bash
-
-DISCORD_TOKEN=your_token_here
-GROQ_API_KEY=your_groq_api_key_here
-
-```
+  ```bash
+  DISCORD_TOKEN=your_token_here
+  GROQ_API_KEY=your_groq_api_key_here
+  ```
 3. **Launch with Docker:**
-```bash
-
-docker-compose up -d --build
-
-```
+  ```bash
+  docker-compose up -d --build
+  ```
 4. **Verify Installation:** Check the logs to ensure the bot connected successfully.
-```bash
-
-docker-compose logs -f
-
-```
+  ```bash
+  docker-compose logs -f
+  ```
 📂 **Project Structure**
 
 /gamerbot
@@ -112,6 +117,8 @@ docker-compose logs -f
 - [x] User Commands: Allow users to subscribe/unsubscribe from specific genres.
 
 - [x] Persistence: Save configuration to JSON files.
+
+- [x] CI/CD: Automated deployment to Oracle Cloud.
 
 - [ ] Database: Migrate from JSON to SQLite/PostgreSQL for better scalability.
 
