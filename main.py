@@ -329,7 +329,7 @@ async def force_check(ctx):
     
     await ctx.send("✅ Busca manual concluída!")
 
-@bot.command(name="export_chats")
+@bot.command(name="export_chats", aliases=["sync_export_now"])
 @commands.has_permissions(administrator=True)
 async def export_chats(ctx):
     """Gera um .zip com o histórico de mensagens logadas e envia no canal atual."""
