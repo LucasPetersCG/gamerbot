@@ -53,6 +53,7 @@ Commands are restricted to **Administrators** to prevent configuration spam.
 | `!last_tibia <days>` | Fetches Tibia news from the last X days and posts them **immediately** (ignoring history). |
 | `!last_steam` | Fetches and posts the latest news for configured Steam games (ignoring history). |
 | `!last_rpg` | Fetches and posts the latest RSS entry from the RPG feed (ignoring history). |
+| `!export_chats` | **(Admin)** Exports the logged message history as a `.zip` and sends it in the current channel. |
 
 ## ☁️ Deployment & DevOps
 

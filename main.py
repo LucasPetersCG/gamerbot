@@ -10,6 +10,7 @@ from services.ai_service import AIService
 from services.steam_service import get_steam_news
 from services.tibia_service import get_tibia_news
 from services.rss_service import get_rpg_news 
+from services.export_service import log_message, build_export_zip
 
 # --- CONFIGURAÇÃO ---
 load_dotenv()
@@ -236,6 +237,23 @@ async def on_guild_join(guild):
         )
         await channel.send(embed=embed)
 
+# --- LOGGING DE MENSAGENS (EXPORT) ---
+@bot.event
+async def on_message(message):
+    """
+    Registra cada mensagem recebida para export posterior (!export_chats).
+    IMPORTANTE: como sobrescrevemos on_message, precisamos chamar
+    bot.process_commands(message) no final, senão os comandos com "!" param de funcionar.
+    """
+    # Não loga as próprias mensagens do bot
+    if message.author.id != bot.user.id:
+        try:
+            log_message(message)
+        except Exception as e:
+            print(f"⚠️ Erro ao logar mensagem para export: {e}")
+
+    await bot.process_commands(message)
+
 # --- COMANDOS DE CONFIGURAÇÃO (SETUP) ---
 @bot.command(name="setup_all_news")
 @commands.has_permissions(administrator=True)
@@ -310,6 +328,25 @@ async def force_check(ctx):
     await process_and_broadcast(r_news)
     
     await ctx.send("✅ Busca manual concluída!")
+
+@bot.command(name="export_chats")
+@commands.has_permissions(administrator=True)
+async def export_chats(ctx):
+    """Gera um .zip com o histórico de mensagens logadas e envia no canal atual."""
+    await ctx.send("📦 Gerando export do histórico de mensagens...")
+
+    zip_path = build_export_zip()
+
+    try:
+        await ctx.send(file=discord.File(zip_path))
+    except discord.HTTPException:
+        await ctx.send(
+            "❌ O arquivo é grande demais para o Discord aceitar. "
+            "Busque o arquivo diretamente no servidor em `~/kodland-bot/data/discord_export/`."
+        )
+    finally:
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
 
 @bot.command(name="last_tibia")
 async def last_tibia(ctx, days: int = 1):
