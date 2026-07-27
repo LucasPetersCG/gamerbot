@@ -29,7 +29,16 @@ def log_message(message):
     """
     Registra uma mensagem em uma linha JSON (.jsonl) dentro de LOG_DIR,
     em um arquivo flat por canal (sem subpastas, pra zipar fácil).
+
+    Só registra mensagens de servidor. Mensagem sem guild é DM: sem canal público,
+    sem categoria, e o nome do arquivo cairia no fallback str(channel.id) — ou seja,
+    conversa privada acabaria virando "canal" no export consolidado. Fora do escopo
+    deste log e indesejável.
     """
+    guild = getattr(message, 'guild', None)
+    if guild is None:
+        return
+
     category = message.channel.category.name if getattr(message.channel, 'category', None) else None
     channel_name = getattr(message.channel, 'name', str(message.channel.id))
 
@@ -38,6 +47,14 @@ def log_message(message):
 
     log_entry = {
         "id": message.id,
+        # Servidor de origem. O nome do arquivo continua sem o guild id de propósito
+        # (mudar a convenção quebraria o parser do lado PowerShell e os .jsonl que já
+        # existem na VM); quem consome usa este campo pra separar os dados por servidor.
+        "guild_id": guild.id,
+        "guild_name": guild.name,
+        "channel_id": message.channel.id,
+        "channel_name": channel_name,
+        "category": category,
         "timestamp": message.created_at.isoformat(),
         "author": {
             "id": message.author.id,
