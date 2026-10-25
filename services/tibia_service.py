@@ -1,7 +1,7 @@
 import aiohttp
 
 async def get_tibia_news(days=1):
-    url = f"https://api.tibiadata.com/v4/news/archive/{days}"
+    url = f"https://api.tibiadata.com/v5/news/archive/{days}"
     news_list = []
 
     try:
@@ -10,7 +10,7 @@ async def get_tibia_news(days=1):
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Tratamento seguro da estrutura da API v4
+                    # Tratamento seguro da estrutura da API v5
                     news_wrapper = data.get('news', {})
                     if isinstance(news_wrapper, dict):
                         items = news_wrapper.get('news', [])
@@ -34,6 +34,8 @@ async def get_tibia_news(days=1):
                                 'content': f"Categoria: {item.get('category')}. Tipo: {item.get('type')}. {item.get('news')}", 
                                 'source': 'Tibia'
                             })
+                else:
+                    print(f"Erro TibiaData (HTTP {response.status}): {response.reason}")
     except Exception as e:
         print(f"Erro ao buscar TibiaData: {e}")
     
